@@ -12,6 +12,10 @@ or from a local iCal file:
 
     icals FILE
 
+Or, using Leiningen:
+
+    lein run URL
+
 ## License
 
 MIT License

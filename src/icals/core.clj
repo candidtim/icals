@@ -1,14 +1,12 @@
 (ns icals.core
   (:gen-class)
   (:use [clojure.java.io :only [reader]])
-  (:import [java.time ZoneId]
+  (:import [java.time LocalDate ZoneId]
            [java.time.format DateTimeFormatter]
            [net.fortuna.ical4j.data CalendarBuilder]
-           [net.fortuna.ical4j.filter Filter]
-           [net.fortuna.ical4j.model Component Date DateTime Period]
+           [net.fortuna.ical4j.model Component DateTime Period]
            [net.fortuna.ical4j.filter.predicate PeriodRule]))
 
-(def time-formatter (DateTimeFormatter/ofPattern "HH:mm"))
 
 (defn ical-datetime [java-local-date]
   "Convert Java LocalDate to ical4j DateTime at midnight, in UTC"
@@ -16,9 +14,14 @@
         java-date (java.util.Date/from (.toInstant java-local-datetime))]
     (DateTime. java-date)))
 
-(def today (ical-datetime (java.time.LocalDate/now)))
+(def today (ical-datetime (LocalDate/now)))
 
-(def tomorrow (ical-datetime (.plusDays (java.time.LocalDate/now) 1)))
+(def tomorrow (ical-datetime (.plusDays (LocalDate/now) 1)))
+
+(def time-formatter (DateTimeFormatter/ofPattern "HH:mm"))
+
+
+;; Simple Event model and functions to manipulate it:
 
 (defrecord Event [start end summary])
 
@@ -29,7 +32,7 @@
 (defn get-start-end [vevent]
   "Get start and end time of a given ical4j VEvent today"
   (let [periods (.getConsumedTime vevent today tomorrow)]
-    (if (empty? periods) ; FIXME this is ugly; why this could be empty anyway?
+    (if (empty? periods) ; FIXME this is ugly; why this can be empty anyway?
       [nil nil]
       (let [occurrence (first periods)
             start-time (to-java-time (.getStart occurrence))
@@ -50,10 +53,8 @@
         end (format-time (:end event))]
     (str start " - " end " " (:summary event))))
 
-(defn configure-ical4j []
-  (System/setProperty
-    "net.fortuna.ical4j.timezone.cache.impl"
-    "net.fortuna.ical4j.util.MapTimeZoneCache"))
+
+;; iCal parsing and filtering:
 
 (defn read-ics-file [path]
   (let [builder (CalendarBuilder.)
@@ -69,9 +70,18 @@
         sorted-events (sort-by :start events)]
     sorted-events))
 
+
+;; Another unfortunate consequence of using the ical4j:
+
+(defn configure-ical4j []
+  (System/setProperty
+    "net.fortuna.ical4j.timezone.cache.impl"
+    "net.fortuna.ical4j.util.MapTimeZoneCache"))
+
+
 (defn -main [path]
   (configure-ical4j)
   (let [cal (read-ics-file path)
         todays-events (filter-today cal)]
-    (doseq [e (filter-today cal)]
+    (doseq [e todays-events]
       (println (format-event e)))))

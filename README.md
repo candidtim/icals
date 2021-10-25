@@ -16,6 +16,12 @@ Or, using Leiningen:
 
     lein run URL
 
+## Building a binary
+
+Assuming that GraalVM CLI is available in `PATH`:
+
+    ./build.sh
+
 ## License
 
 MIT License

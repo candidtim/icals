@@ -1,11 +1,11 @@
 (ns icals.core
-  (:gen-class)
   (:use [clojure.java.io :only [reader]])
   (:import [java.time LocalDate ZoneId]
            [java.time.format DateTimeFormatter]
            [net.fortuna.ical4j.data CalendarBuilder]
            [net.fortuna.ical4j.model Component DateTime Period]
-           [net.fortuna.ical4j.filter.predicate PeriodRule]))
+           [net.fortuna.ical4j.filter.predicate PeriodRule])
+  (:gen-class))
 
 
 (defn ical-datetime [java-local-date]
@@ -71,16 +71,7 @@
     sorted-events))
 
 
-;; Another unfortunate consequence of using the ical4j:
-
-(defn configure-ical4j []
-  (System/setProperty
-    "net.fortuna.ical4j.timezone.cache.impl"
-    "net.fortuna.ical4j.util.MapTimeZoneCache"))
-
-
 (defn -main [path]
-  (configure-ical4j)
   (let [cal (read-ics-file path)
         todays-events (filter-today cal)]
     (doseq [e todays-events]

@@ -2,19 +2,31 @@
 
 A program that prints today's events from a given iCal resource (URL, file).
 
+`icals` is a concatenation of `ical` and `ls`.
+
 ## Usage
 
-Print events from a iCal file available via HTTP:
+Print today's events from an iCal file (`*.ics` file) available at a given
+location:
 
-    icals URL
+    icals [-h|--help] [-f|--format FORMAT] [-d|--date DATE] LOCATION
 
-or from a local iCal file:
+where:
 
-    icals FILE
+ - `LOCATION` can be an URL or a file path
+ - `FORMAT` is a template string to use to format each event as text
+ - `DATE` is a date to print the events for, in YYYY-MM-DD format; default is
+   today
 
-Or, using Leiningen:
+Default `FORMAT` is `{{start}} - {{end}}: {{summary}}`. `FORMAT` uses a
+mustache-like syntax ([Selmer(https://github.com/yogthos/Selmer)), and accepts
+following arguments: `start`, `end`, `summary`.
 
-    lein run URL
+Using Leiningen:
+
+    lein run [OPTS] LOCATION
+
+where `OPTS` are the same options as described bove.
 
 ## License
 

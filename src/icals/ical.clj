@@ -32,6 +32,10 @@
         summary (.getValue (.getSummary vevent))]
     (Event. start end summary)))
 
+; TODO: filter out not accepted events (add a command line option?)
+; TODO: figure out why some events have no time when projected to a date
+; TODO: figure out why some events are duplicated, why removed events are still present
+; FIXME: find better abstractions for events to easily project them to the given date
 (defn filter-by-day [cal day]
   (let [ical-day (to-ical-datetime day)
         ical-next-day (to-ical-datetime (.plusDays day 1))

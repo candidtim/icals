@@ -19,7 +19,7 @@ where:
    today
 
 Default `FORMAT` is `{{start}} - {{end}}: {{summary}}`. `FORMAT` uses a
-mustache-like syntax ([Selmer(https://github.com/yogthos/Selmer)), and accepts
+mustache-like syntax ([Selmer](https://github.com/yogthos/Selmer)), and accepts
 following arguments: `start`, `end`, `summary`.
 
 Using Leiningen:
